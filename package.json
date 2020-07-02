@@ -1,0 +1,24 @@
+{
+  "name": "bamazon",
+  "version": "1.0.0",
+  "description": "Bamazon App",
+  "main": "bamazonCustomers.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hellogoodbyemae/bamazon.git"
+  },
+  "author": "Margaret Egner",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hellogoodbyemae/bamazon/issues"
+  },
+  "homepage": "https://github.com/hellogoodbyemae/bamazon#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^7.3.0",
+    "mysql": "^2.18.1"
+  }
+}
