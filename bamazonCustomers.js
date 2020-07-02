@@ -13,7 +13,7 @@ var connection = mysql.createConnection({
   database: "bamazon_DB"
 });
 
-connection.connect(function(err) {
+connection.connect(function (err) {
   if (err) throw err;
   console.log("connected as id " + connection.threadId + "\n");
   displayInventory();
@@ -22,7 +22,7 @@ connection.connect(function(err) {
 var query = "select * from products";
 
 function displayInventory() {
-  connection.query(query, function(err, res) {
+  connection.query(query, function (err, res) {
     if (err) throw err;
     else {
       console.table(res);
@@ -30,10 +30,6 @@ function displayInventory() {
     customerShop();
   })
 }
-
-// function updateInventory() {
-
-// }
 
 function customerShop() {
   inquirer
@@ -47,7 +43,7 @@ function customerShop() {
         name: "amount",
         type: "input",
         message: "How many?",
-        validate: function(value) {
+        validate: function (value) {
           if (isNaN(value) === false) {
             return true;
           }
@@ -55,25 +51,61 @@ function customerShop() {
         }
       }
     ])
-    .then(function(answer) {
-      connection.query(query, function(err, res) {
+    .then(function (answer) {
+      connection.query(query, function (err, res) {
         if (err) throw err;
         inquirer
           .prompt({
-              name: "options",
-              type: "list",
-              message: "What would you like to do next?",
-              choices: ["CONTINUE SHOPPING", "EXIT"]
+            name: "options",
+            type: "list",
+            message: "What would you like to do next?",
+            choices: ["CONTINUE SHOPPING", "EXIT"]
           })
-          .then(function(answer) {
+          .then(function (answer) {
             if (answer.options === "CONTINUE SHOPPING") {
+              function updateInventory() {
+                var oldQuantity = 0;
+                var newQuantity = 0;
+                var id;
+
+                connection.query(
+                  "SELECT products SET ? WHERE ?",
+                  {
+                    item_id: answers.id
+                  },
+                  (err, res, fields) => {
+                    if (err) throw err;
+                    else {
+                      oldQuantity = res[0].stock_quantity;
+                      newQuantity = oldQuantity - answer.amount;
+                      id = answers.id;
+                      if (newQuantity > -1) {
+                        connection.query("UPDATE products SET ? WHERE ?"),
+                          [{
+                            stock_quantity: newStock
+                          },
+                          {
+                            item_id: answers.id
+                          }]
+                      }
+                      else {
+                        console.log(res.affectedRows + " products updated!\n");
+                      }
+                    }
+
+                    displayInventory();
+                    customerShop();
+                  }
+                );
+              }
               customerShop();
             }
             else {
-              
+
               connection.end();
             }
           })
       });
     });
+
 }
