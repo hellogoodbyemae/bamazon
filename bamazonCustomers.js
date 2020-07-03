@@ -59,53 +59,44 @@ function customerShop() {
             name: "options",
             type: "list",
             message: "What would you like to do next?",
-            choices: ["CONTINUE SHOPPING", "EXIT"]
+            choices: ["CONTINUE SHOPPING", "CHECK OUT"]
           })
           .then(function (answer) {
             if (answer.options === "CONTINUE SHOPPING") {
-              function updateInventory() {
-                var oldQuantity = 0;
-                var newQuantity = 0;
-                var id;
-
-                connection.query(
-                  "SELECT products SET ? WHERE ?",
-                  {
-                    item_id: answers.id
-                  },
-                  (err, res, fields) => {
-                    if (err) throw err;
-                    else {
-                      oldQuantity = res[0].stock_quantity;
-                      newQuantity = oldQuantity - answer.amount;
-                      id = answers.id;
-                      if (newQuantity > -1) {
-                        connection.query("UPDATE products SET ? WHERE ?"),
-                          [{
-                            stock_quantity: newStock
-                          },
-                          {
-                            item_id: answers.id
-                          }]
-                      }
-                      else {
-                        console.log(res.affectedRows + " products updated!\n");
-                      }
-                    }
-
-                    displayInventory();
-                    customerShop();
-                  }
-                );
-              }
-              customerShop();
+              updateInventory();
             }
             else {
-
-              connection.end();
+              totalDue();
             }
           })
       });
     });
-
 }
+
+function updateInventory(answer) {
+  console.log("Updating for " + res[0].answer.item + "...\n");
+  
+  var oldQty = res.stock_quantity;
+  var newQty = oldQty - res[0].answer.amount;
+
+  query = connection.query(
+    "UPDATE products SET ? WHERE ?",
+    [
+      {
+        stock_quantity: newQty
+      },
+      {
+        product_name: res[0].answer.item
+      }
+    ],
+    function(err, res) {
+      if (err) throw err;
+      console.log(res.affectedRows + " products updated!\n");
+      // readInventory();
+    }
+  );
+}
+
+// function readInventory() {
+  
+// }
